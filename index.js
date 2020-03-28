@@ -1,9 +1,18 @@
-function createStore() {
+// Reducer function.
+const todos = (state = [], action) => {
+  if (action.type === 'ADD_TODO') {
+    return state.concat([action.todo]);
+  }
+
+  return state;
+};
+
+const createStore = reducer => {
   /*  The store have four parts
-   *  1. The state
-   *  2. Get the state
-   *  3. Listen to changes on the state
-   *  4. Update the state
+   *  1. state
+   *  2. function to get the state
+   *  3. function ~ listen to changes on the state
+   *  4. function ~ Update the state
    */
 
   let state;
@@ -19,12 +28,29 @@ function createStore() {
     };
   };
 
+  const dispatch = action => {
+    /*
+     * call todos
+     * loop over listeners and invoke them
+     */
+    state = reducer(state, action);
+    listeners.forEach(listener => listener());
+  };
+
   return {
     getState,
     subscribe,
+    dispatch,
   };
-}
+};
 
 const store = createStore();
 
-store.subscribe(() => {});
+store.dispatch({
+  type: 'ADD_TODO',
+  todo: {
+    id: 0,
+    name: 'Learn Redux',
+    complete: false,
+  },
+});
