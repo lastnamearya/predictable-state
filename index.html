@@ -19,6 +19,11 @@
       <ul id="goals"></ul>
     </div>
     <script type="text/javascript">
+      // random id generator
+      const generateID = () => {
+        return Math.random().toString(36).substring(2) + new Date().getTime().toString(36);
+      };
+
       const createStore = (reducer) => {
         /*  The store have four parts
          *  1. state
@@ -147,41 +152,65 @@
         console.log('The new state is: ', store.getState());
       });
 
-      store.dispatch(
-        addTodoAction({
-          id: 0,
-          name: 'Learn Redux',
-          completed: false,
-        })
-      );
+      // store.dispatch(
+      //   addTodoAction({
+      //     id: 1,
+      //     name: 'Learn pure functions',
+      //     completed: true,
+      //   })
+      // );
 
-      store.dispatch(
-        addTodoAction({
-          id: 1,
-          name: 'Learn pure functions',
-          completed: true,
-        })
-      );
+      // store.dispatch(toggleTodoAction(0));
 
-      store.dispatch(toggleTodoAction(0));
+      // store.dispatch(
+      //   addGoalAction({
+      //     id: 0,
+      //     goal: 'Work till morning',
+      //   })
+      // );
 
-      store.dispatch(
-        addGoalAction({
-          id: 0,
-          goal: 'Work till morning',
-        })
-      );
+      // store.dispatch(removeTodoAction(1));
 
-      store.dispatch(removeTodoAction(1));
+      // store.dispatch(
+      //   addGoalAction({
+      //     id: 1,
+      //     goal: "Don't sleep",
+      //   })
+      // );
 
-      store.dispatch(
-        addGoalAction({
-          id: 1,
-          goal: "Don't sleep",
-        })
-      );
+      // store.dispatch(removeGoalAction(1));
 
-      store.dispatch(removeGoalAction(1));
+      // DOM manipulation ****************** //
+
+      const addTodo = () => {
+        const input = document.getElementById('todo');
+        const name = input.value;
+        input.value = '';
+
+        store.dispatch(
+          addTodoAction({
+            id: generateID(),
+            name,
+            completed: false,
+          })
+        );
+      };
+
+      const addGoal = () => {
+        const input = document.getElementById('goal');
+        const name = input.value;
+        input.value = '';
+
+        store.dispatch(
+          addGoalAction({
+            id: generateID(),
+            name,
+          })
+        );
+      };
+
+      document.getElementById('todoBtn').addEventListener('click', addTodo);
+      document.getElementById('goalBtn').addEventListener('click', addGoal);
     </script>
   </body>
 </html>
