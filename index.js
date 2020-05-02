@@ -1,13 +1,20 @@
 // Reducer function.
 const todos = (state = [], action) => {
-  if (action.type === 'ADD_TODO') {
-    return state.concat([action.todo]);
+  switch (action.type) {
+    case 'ADD_TODO':
+      return state.concat([action.todo]);
+    case 'REMOVE_TODO':
+      return state.filter((todo) => todo.id !== action.id);
+    case 'TOGGLE_TODO':
+      return state.map((todo) =>
+        todo.id === action.id ? Object.assign({}, todo, { completed: !todo.complete }) : todo
+      );
+    default:
+      return state;
   }
-
-  return state;
 };
 
-const createStore = reducer => {
+const createStore = (reducer) => {
   /*  The store have four parts
    *  1. state
    *  2. function to get the state
@@ -20,21 +27,21 @@ const createStore = reducer => {
 
   const getState = () => state;
 
-  const subscribe = listener => {
+  const subscribe = (listener) => {
     listeners.push(listener);
 
     return () => {
-      listeners = listeners.filter(l => l !== listener);
+      listeners = listeners.filter((l) => l !== listener);
     };
   };
 
-  const dispatch = action => {
+  const dispatch = (action) => {
     /*
      * call todos
      * loop over listeners and invoke them
      */
     state = reducer(state, action);
-    listeners.forEach(listener => listener());
+    listeners.forEach((listener) => listener());
   };
 
   return {
@@ -44,13 +51,38 @@ const createStore = reducer => {
   };
 };
 
-const store = createStore();
+// ********************************** //
+
+const store = createStore(todos);
+
+const unsubscribe = store.subscribe(() => {
+  console.log('The new state is: ', store.getState());
+});
 
 store.dispatch({
   type: 'ADD_TODO',
   todo: {
     id: 0,
     name: 'Learn Redux',
-    complete: false,
+    completed: false,
   },
+});
+
+store.dispatch({
+  type: 'ADD_TODO',
+  todo: {
+    id: 1,
+    name: 'Learn pure functions',
+    completed: true,
+  },
+});
+
+store.dispatch({
+  type: 'REMOVE_TODO',
+  id: 1,
+});
+
+store.dispatch({
+  type: 'TOGGLE_TODO',
+  id: 0,
 });
